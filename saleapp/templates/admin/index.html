@@ -1,0 +1,85 @@
+{%extends 'admin/base.html' %}
+
+{% block body %}
+{% if current_user.is_authenticated %}
+<h1 class="text-center text-danger"> WELCOME {{current_user.name}} </h1>
+<div class="row">
+    <div class="col-md-6 col-xs-12">
+    <table class="table">
+        <tr>
+            <th>Ma danh muc</th>
+            <th>Ten danh muc</th>
+            <th>So san pham</th>
+        </tr>
+        {%for c in category_stats%}
+        <tr>
+            <td>{{c[0]}}</td>
+            <td>{{c[1]}}</td>
+            <td>{{c[2]}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+</div>
+<div class="col-md-6 col-xs-12">
+      <canvas id="myCategoryChart"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myCategoryChart');
+    let labels =[]
+    let data = []
+    let colors = []
+    let borderColors = []
+    let r, g, b
+    {%for c in category_stats%}
+        labels.push('{{c[1]}}')
+        data.push({{c[2]}})
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
+        colors.push(`rgb(${r},${g},${b},0.2)`)
+        borderColors.push(`rgb(${r},${g},${b},1)`)
+     {%endfor%}
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Thong ke so san pham theo danh muc',
+        data: data,
+        borderWidth: 1,
+        backgroundColor: colors,
+        borderColor: borderColors
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+</div>
+
+</div>
+
+{%else%}
+{% if err_msg%}
+<h3 class="text-warning text-center">{{err_msg}}</h3>
+{%endif%}
+<form method="post" action="{{url_for('admin.admin_signin')}}">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="form-group">
+        <label for="pass">Password</label>
+        <input type="password" class="form-control" id="pass" name="password" required>
+    </div>
+    <input type="submit" value="Dang Nhap" class="btn btn-danger">
+</form>
+
+{%endif%}
+{% endblock%}

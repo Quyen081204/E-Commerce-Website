@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tat ca san pham</title>
+    <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1 class="subject"> Danh sach san pham </h1>
+
+    <hr>
+        <form>
+            <input type="Text" name="keyword" placeholder="Nhap tu khoa can tim"/>
+            <input type="Number" name="from_price" placeholder="Nhap gia bat dau"/>
+            <input type="Number" name="to_price" placeholder="Nhap gia ket thuc"/>
+            <input type="Submit" value="Tim"/>
+        </form>
+    <hr>
+
+    <table border="1" class="product">
+        <tr>
+            <th></th>
+            <th>Ma san pham</th>
+            <th>Ten san pham</th>
+            <th>Mo ta</th>
+            <th>Gia ban</th>
+        </tr>
+        {%for p in products%}
+        <tr>
+            <td><a href="{{url_for('detailProducts',productID=p.id)}}"><img src="{{p.image}}" width="120" alt="{{p.name}}"/></a></td>
+            <td>{{p.id}}</td>
+            <td>{{p.name}}</td>
+            <td>{{p.description}}</td>
+            <td>{{"{:,.1f}".format(p.price)}} VND</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+</body>
+</html>

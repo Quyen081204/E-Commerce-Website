@@ -1,0 +1,66 @@
+{%extends 'layout/base.html'%}
+
+{%block title%}Chi tiet san pham{%endblock%}
+
+{%block content%}
+<h1 class="text-center text-info">Chi tiet san pham</h1>
+<div class="row mt-4 mb-3">
+    <div class="col-md-5 col-xs-12">
+        <img src="{{product.image}}" alt="{{product.name}}" style="width:100%">
+    </div>
+    <div class="col-md-7 col-xs-12 pt-1">
+        <p>Ten san pham: {{product.name}}</p>
+        <p>Mo ta: {{product.description}}</p>
+        <p>Gia ban: {{'{:,.0f}'.format(product.price)}} VND</p>
+    </div>
+</div>
+<div>
+    {%if current_user.is_authenticated%}
+    <div>
+        <div class="form-group">
+            <textarea class="form-control" placeholder="Nhap binh luan..." id="commentId"></textarea>
+        </div>
+        <input type="button"
+               value="Binh luan"
+               class="btn btn-primary"
+               onclick="addComment({{product.id}})">
+    </div>
+    {%else%}
+    {%set nextURL = 'products' ~ '/' ~ product.id%}
+    <a href="{{url_for('user_signin', next=nextURL)}}">Dang nhap de binh luan</a>
+    {%endif%}
+    <div id="commentArea">
+        {%for c in comments%}
+        <hr class="mt-3 mb-2">
+        <div class="col-md-6 col-xs-12 p-0">
+            <p class="font-weight-bolder mb-1">{{c.user.name}}</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p class="font-italic">{{c.content}}</p>
+            </div>
+            <div class="col-md-2">
+                <p class="font-italic myDate">{{c.created_date}}</p>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    {% if pages > 1%}
+    <ul class="pagination">
+        {% for idx in range(1, pages + 1)%}
+        <li class="page-item"><a class="page-link" href="javascript:;" onclick="loadComments({{product.id}},{{idx}})">{{idx}}</a></li>
+        {%endfor%}
+    </ul>
+    {%endif%}
+</div>
+
+<script>
+    window.onload = function () {
+        dates = document.getElementsByClassName('myDate')
+        for (let i = 0;i < dates.length;i++) {
+        dates[i].innerText = moment(dates[i].innerText).locale('vi').fromNow();
+        }
+    }
+</script>
+
+{% endblock %}

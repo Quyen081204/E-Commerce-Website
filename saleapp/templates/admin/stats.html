@@ -1,0 +1,138 @@
+{%extends 'admin/base.html' %}
+
+{% block body %}
+<h1 class="text-center text-danger">THONG KE BAO CAO</h1>
+<div class="row">
+    <div class="col-md-6 col-xs-12">
+        <table class="table">
+            <tr>
+                <th>Ma san pham</th>
+                <th>Ten san pham</th>
+                <th>Doanh thu</th>
+            </tr>
+            {% for s in stats %}
+            <tr>
+                <td>{{s[0]}}</td>
+                <td>{{s[1]}}</td>
+                {%if s[2]%}
+                <td>{{"{:,.1f}".format(s[2])}} VND</td>
+                {%else%}
+                <td>0 VND</td>
+                {%endif%}
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" name="kw" placeholder="Nhap tu khoa...">
+            </div>
+            <div class="form-group">
+                <input type="date" class="form-control" name="from_date">
+            </div>
+            <div class="form-group">
+                <input type="date" class="form-control" name="to_date">
+            </div>
+            <input type="submit" value="Thong ke" class="btn btn-info">
+        </form>
+        <canvas id="myProductChart"></canvas>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6 col-xs-12">
+        <table class="table" id="table_month_stat">
+            <tr>
+                <th>Thang</th>
+                <th>Doanh thu</th>
+            </tr>
+            {%for s in month_stats%}
+            <tr>
+                <td>{{s[0]}}</td>
+                <td>{{"{:,.1f}".format(s[1])}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+    <div class="col-md-6 col-xs-12">
+            <div class="form-group">
+            <input type="number" id="year_input" class="form-control" min="2000" placeholder="Nhap nam can thong ke ...">
+            </div>
+            <button class="btn btn-danger" onclick="analyze_month_stats()">Thong ke</button>
+
+        <div id="chart_container">
+            <canvas id="myProductMonthChart"></canvas>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{url_for('static', filename='js/month_stats.js')}}"></script>
+
+        <script>
+            window.onload = function() {
+                  const ctx = document.getElementById('myProductChart').getContext('2d');
+                  const ctx2 = document.getElementById('myProductMonthChart').getContext('2d');
+              let labels =[]
+              let data = []
+              let colors = []
+              let borderColors = []
+              let r, g, b
+              {%for s in stats%}
+                  labels.push('{{s[1]}}')
+                  {%if s[2]%}
+                  data.push({{s[2]}})
+                  {%else%}
+                  data.push(0)
+                  {%endif%}
+                  r = Math.random()*255
+                  g = Math.random()*255
+                  b = Math.random()*255
+                  colors.push(`rgb(${r},${g},${b},0.2)`)
+                  borderColors.push(`rgb(${r},${g},${b},1)`)
+               {%endfor%}
+
+              loadChart(ctx,'bar','Thong ke danh muc san pham',labels,data,colors, borderColors)
+                let labels2 =[]
+              let data2 = []
+              let colors2 = []
+              let borderColors2 = []
+              {%for s in month_stats%}
+                  labels2.push({{s[0]}})
+                  data2.push({{s[1]}})
+                  r = Math.random()*255
+                  g = Math.random()*255
+                  b = Math.random()*255
+                  colors2.push(`rgb(${r},${g},${b},0.2)`)
+                  borderColors2.push(`rgb(${r},${g},${b},1)`)
+               {%endfor%}
+              loadChart(ctx2,'bar','Thong ke doanh thu theo thang',labels2,data2,colors2, borderColors2)
+
+              function loadChart(ctx, type,label,labels, data, colors, borderColors) {
+                  new Chart(ctx, {
+              type: type,
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: label,
+                  data: data,
+                  borderWidth: 1,
+                  backgroundColor: colors,
+                  borderColor: borderColors
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+              }
+            }
+        </script>
+{% endblock%}

@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
+    <a class="navbar-brand" href="/">Trang chu</a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            {% for c in cates%}
+
+            <li class="nav-item {%if 'category_id' in request.args and c.id == request.args.category_id|int %}active{% endif %}">
+                <a class="nav-link" href="{{url_for('home',category_id=c.id)}}">{{c.name}}</a>
+            </li>
+            {%endfor%}
+            {% if current_user.is_authenticated %}
+            <li class="nav-item ">
+                <a class="nav-link text-success" href="{{url_for('home')}}"><img src="{{current_user.avatar}}" width="30" alt="{{current_user.name}}"/>{{current_user.username}}</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link text-danger" href="{{url_for('user_signout')}}">Dang Xuat</a>
+            </li>
+            {%else%}
+            <li class="nav-item ">
+                <a class="nav-link text-danger" href="{{url_for('user_register')}}">Dang Ky</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link text-succes" href="{{url_for('user_signin')}}">Dang Nhap</a>
+            </li>
+            {%endif%}
+            <li class="nav-item ">
+                <a class="nav-link text-success" href="/cart">Giỏ hàng
+                    <span class="badge badge-info cart_counter" id="cart_items">{{cart_counter}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <form class="form-inline">
+        <input class="form-control mr-sm-2" type="text" placeholder="Nhap tu khoa" name="keyword">
+        <button class="btn btn-success" type="submit">Search</button>
+    </form>
+</nav>

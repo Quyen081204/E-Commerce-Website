@@ -1,0 +1,39 @@
+{%extends 'layout/base.html'%}
+
+{%block title%}Trang chu{%endblock%}
+
+{%block content%}
+
+<h1 class="subject"> Chao mung den voi Website ban hang </h1>
+
+    {%if products%}
+    {% if pages > 1%}
+    <ul class="pagination">
+        {% for idx in range(1, pages + 1)%}
+        <li class="page-item"><a class="page-link" href="{{url_for('home',page=idx)}}">{{idx}}</a></li>
+        {%endfor%}
+    </ul>
+    {%endif%}
+
+
+    <div class="row">
+        {%for p in products%}
+        <div class="col-md-3" class="col-xs-12" style="padding:5px">
+            <div class="card" style="padding:5px">
+                <img class="card-img-top" src="{{p.image}}" alt="{{p.name}}" style="width:263; height:175px">
+                <div class="card-body">
+                    <h4 class="card-title">{{p.name}}</h4>
+                    <p class="card-text">{{ "{:,.1f}".format(p.price)}} VND</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart({{p.id}},'{{p.name}}',{{p.price}})">Mua hang</a>
+                    <a href="{{url_for('detailProducts', productID=p.id)}}" class="btn btn-info">Xem chi tiet</a>
+                </div>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    {%else%}
+    <p><i>Khong co san pham nao</i></p>
+    {%endif%}
+
+
+{%endblock%}
